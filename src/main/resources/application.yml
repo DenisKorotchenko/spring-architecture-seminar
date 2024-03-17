@@ -1,3 +1,19 @@
 server:
   servlet:
     context-path: /example
+
+telegram:
+  botName: "EasyTickets"
+  token: ${TELEGRAM_TOKEN}
+
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: password
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update

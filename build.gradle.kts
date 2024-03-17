@@ -28,6 +28,9 @@ dependencies {
     //implementation("org.springdoc:springdoc-openapi-ui:1.6.3")
     implementation("javax.validation:validation-api:1.1.0.Final")
     implementation("org.springdoc","springdoc-openapi-starter-webmvc-ui", "2.0.2")
+
+    implementation("org.telegram:telegrambots-spring-boot-starter:6.8.0")
+    implementation("org.telegram:telegrambotsextensions:6.8.0")
 }
 
 tasks {
