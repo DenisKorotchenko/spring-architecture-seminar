@@ -2,17 +2,24 @@ package ru.dksu.telegram
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import org.telegram.telegrambots.extensions.bots.commandbot.CommandBot
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot
+import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 
 @Component
 class TicketsEasyBot(
+    commands: Set<BotCommand>,
     @Value("\${telegram.token}")
     token: String,
     @Value("\${telegram.botName")
     val botName: String
 ): TelegramLongPollingCommandBot(token) {
+    init {
+        registerAll(*commands.toTypedArray())
+    }
+
     override fun getBotUsername(): String = botName
 
     fun createMessage(chatId: String, text: String) =

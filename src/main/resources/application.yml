@@ -9,9 +9,9 @@ telegram:
 
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:./build/db
+    username: admin
     password: password
   jpa:
     show-sql: true

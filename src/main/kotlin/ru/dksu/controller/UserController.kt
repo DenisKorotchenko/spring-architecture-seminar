@@ -9,7 +9,7 @@
 //import org.springframework.web.bind.annotation.RequestMapping
 //import org.springframework.web.bind.annotation.RestController
 //import ru.dksu.dao.UserDao
-//import ru.dksu.entity.UserEntity
+//import ru.dksu.db.entity.UserEntity
 //
 //@RestController
 //@RequestMapping("/user")
