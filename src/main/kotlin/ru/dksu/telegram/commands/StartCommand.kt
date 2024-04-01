@@ -2,15 +2,12 @@ package ru.dksu.telegram.commands
 
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Chat
 import org.telegram.telegrambots.meta.api.objects.User
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
 import org.telegram.telegrambots.meta.bots.AbsSender
 import ru.dksu.db.entity.UserEntity
 import ru.dksu.db.repository.UserRepository
+import ru.dksu.telegram.createMessageWithInlineButtons
 
 @Component
 class StartCommand(
@@ -22,22 +19,33 @@ class StartCommand(
                 id = user.id,
                 chatId = chat.id,
                 userName = user.userName,
+                subscriptions = mutableSetOf(),
             )
         )
-        sender.execute(SendMessage(chat.id.toString(), "Welcome to EasyTickets, ${user.userName}").apply {
-            replyMarkup = ReplyKeyboardMarkup.builder()
-                .keyboard(
-                    listOf(
-                        KeyboardRow().apply {
-                            add("Поиск билетов")
-                        },
-                        KeyboardRow().apply {
-                            add("Мои подписки")
-                        }
-                    )
+        sender.execute(
+            createMessageWithInlineButtons(
+                chatId = chat.id.toString(),
+                text = "Welcome to EasyTickets, ${user.userName}!",
+                inlineButtons = listOf(
+                    listOf("search" to "Поиск билетов"),
+                    listOf("subscriptions" to "Управление подписками")
                 )
-                .oneTimeKeyboard(true)
-                .build()
-        })
+            )
+        )
+    //        SendMessage(chat.id.toString(), "Welcome to EasyTickets, ${user.userName}").apply {
+//            replyMarkup = ReplyKeyboardMarkup.builder()
+//                .keyboard(
+//                    listOf(
+//                        KeyboardRow().apply {
+//                            add("Поиск билетов")
+//                        },
+//                        KeyboardRow().apply {
+//                            add("Мои подписки")
+//                        }
+//                    )
+//                )
+//                .oneTimeKeyboard(true)
+//                .build()
+//        })
     }
 }
