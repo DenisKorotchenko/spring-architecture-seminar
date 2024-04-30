@@ -14,6 +14,7 @@ class StartCommand(
     val userRepository: UserRepository,
 ) : BotCommand(Commands.START.text, "Start command for TicketsEasyBot") {
     override fun execute(sender: AbsSender, user: User, chat: Chat, args: Array<out String>) {
+        println(chat.id)
         userRepository.save(
             UserEntity(
                 id = user.id,
