@@ -21,4 +21,8 @@ data class SubscriptionEntity(
     @ManyToOne
     @JoinColumn(name = "placeToId")
     val placeTo: PlaceEntity,
+
+    val date: String,
+
+    val priceLimit: Long? = null,
 )

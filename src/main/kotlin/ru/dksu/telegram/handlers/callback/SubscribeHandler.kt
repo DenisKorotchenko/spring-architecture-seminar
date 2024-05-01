@@ -27,6 +27,8 @@ class SubscribeHandler(
             userId = user.id,
             placeFrom = placeRepository.findById(arguments[0]).get(),
             placeTo = placeRepository.findById(arguments[1]).get(),
+            date = arguments[2],
+            priceLimit = arguments.getOrNull(3)?.toLong()
         )
 
         user.subscriptions.add(subscription)

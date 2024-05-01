@@ -36,8 +36,6 @@ import kotlin.jvm.optionals.getOrNull
 @Component
 class DateMessageHandler(
     val stateRepository: StateRepository,
-    val userRepository: UserRepository,
-    val subscriptionRepository: SubscriptionRepository,
     val placeRepository: PlaceRepository,
     val webClient: WebClient,
     val objectMapper: ObjectMapper,
@@ -75,6 +73,7 @@ class DateMessageHandler(
                         .text("Невозможно найти билеты на уже прошедшую дату. Попробуйте ещё раз")
                         .build()
                 )
+                return
             }
             if (ChronoUnit.DAYS.between(LocalDate.now(), date) > 365) {
                 absSender.execute(
@@ -83,6 +82,7 @@ class DateMessageHandler(
                         .text("Невозможно найти билеты на более чем 365 дней вперёд. Попробуйте ещё раз")
                         .build()
                 )
+                return
             }
             date
         } catch (e: RuntimeException) {
@@ -189,7 +189,7 @@ class DateMessageHandler(
                 ).apply {
                     replyMarkup = getInlineKeyboard(
                         listOfNotNull(
-                            minTariff?.let { listOf("subscribeLow|${placeFromEntity.id}|${placeToEntity.id}|$it" to "Подписаться на билеты дешевле $it рублей") } ?: listOf("subscribe|${placeFromEntity.id}|${placeToEntity.id}" to "Подписаться на билеты"),
+                            minTariff?.let { listOf("subscribe|${placeFromEntity.id}|${placeToEntity.id}|${message.text}|$it" to "Подписаться на билеты дешевле $it рублей") } ?: listOf("subscribe|${placeFromEntity.id}|${placeToEntity.id}|${message.text}" to "Подписаться на билеты"),
                             listOf("main" to "Главное меню"),
                         )
                     )
@@ -207,7 +207,7 @@ class DateMessageHandler(
                     .replyMarkup(
                         getInlineKeyboard(
                             listOf(
-                                listOf("subscribe|${placeFromEntity.id}|${placeToEntity.id}" to "Подписаться на билеты"),
+                                listOf("subscribe|${placeFromEntity.id}|${placeToEntity.id}|${message.text}" to "Подписаться на билеты"),
                                 listOf("main" to "Главное меню"),
                             )
                         )
@@ -220,11 +220,4 @@ class DateMessageHandler(
             stateRepository.save(state)
         }
     }
-}
-
-fun main() {
-    println(ChronoUnit.DAYS.between(
-        LocalDate.parse("11.05.2023", DateTimeFormatter.ofPattern("dd.MM.uuuu")),
-        LocalDate.parse("11.05.2021", DateTimeFormatter.ofPattern("dd.MM.uuuu"))
-    ))
 }

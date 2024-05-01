@@ -9,23 +9,20 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import ru.dksu.db.entity.StateEntity
 import ru.dksu.db.repository.PlaceRepository
 import ru.dksu.db.repository.StateRepository
+import ru.dksu.service.NearestPlaceService
 import ru.dksu.telegram.state.State
 
 @Component
 class FromPlaceMessageHandler(
+    override val nearestPlaceService: NearestPlaceService,
     val stateRepository: StateRepository,
     val placeRepository: PlaceRepository,
-): TextMessageHandler {
+): PlaceMessageHandler(nearestPlaceService) {
     override val state = State.FROM_PLACE
     override fun process(absSender: AbsSender, message: Message, state: StateEntity) {
         val placeEntity = placeRepository.findByName(message.text.uppercase())
         if (placeEntity == null) {
-            absSender.execute(
-                SendMessage.builder()
-                    .chatId(message.chatId)
-                    .text("Станция не найдена, попробуйте ещё раз:")
-                    .build()
-            )
+            notFound(absSender, message)
             return
         }
 

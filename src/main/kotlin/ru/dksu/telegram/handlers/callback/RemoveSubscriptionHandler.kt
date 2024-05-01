@@ -18,7 +18,7 @@ class RemoveSubscriptionHandler(
     override val name: HandlerName = HandlerName.REMOVE_SUBSCRIPTION
     override fun processCallbackData(absSender: AbsSender, callbackQuery: CallbackQuery, arguments: List<String>) {
         val subscriptionId = arguments[0]
-        val subscription = subscriptionRepository.deleteById(subscriptionId.toLong())
+        subscriptionRepository.deleteById(subscriptionId.toLong())
         subscriptionsHandler.processCallbackData(absSender, callbackQuery, arguments)
     }
 }

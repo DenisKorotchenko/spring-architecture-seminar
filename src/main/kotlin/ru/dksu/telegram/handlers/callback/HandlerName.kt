@@ -6,5 +6,6 @@ enum class HandlerName(val text: String) {
     SUBSCRIPTION("subscription"),
     SUBSCRIBE("subscribe"),
     REMOVE_SUBSCRIPTION("remove_subscription"),
-    MAIN("main")
+    MAIN("main"),
+    PLACE_TIP("place_tip")
 }

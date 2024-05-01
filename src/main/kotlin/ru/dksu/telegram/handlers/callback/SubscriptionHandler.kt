@@ -25,8 +25,8 @@ class SubscriptionHandler(
                 .messageId(callbackQuery.message.messageId)
                 .inlineMessageId(callbackQuery.inlineMessageId)
                 .text("""Подписка:
-                    |от ${subscription.placeFrom}
-                    |до ${subscription.placeTo}
+                    |от ${subscription.placeFrom.name}
+                    |до ${subscription.placeTo.name}
                 """.trimMargin())
                 .replyMarkup(getInlineKeyboard(listOf(
                     listOf("remove_subscription|${subscription.id}" to "Удалить подписку"),

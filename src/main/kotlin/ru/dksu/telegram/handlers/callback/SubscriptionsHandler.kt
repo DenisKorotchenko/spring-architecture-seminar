@@ -27,7 +27,11 @@ class SubscriptionsHandler(
                         listOf("search" to "Добавить подписку"),
                     ) + (userRepository.findById(callbackQuery.message.chatId).getOrNull()?.subscriptions ?: emptySet())
                         .map {
-                            listOf("subscription|${it.id}" to "${it.placeFrom.name} - ${it.placeTo.name}")
+                            var text = "${it.placeFrom.name} - ${it.placeTo.name}, ${it.date}"
+                            if (it.priceLimit != null) {
+                                text += ", дешевле ${it.priceLimit}"
+                            }
+                            listOf("subscription|${it.id}" to text)
                         })
                 )
                 .build()
