@@ -18,7 +18,8 @@ class SubscriptionsScheduler(
 ) {
     @Scheduled(fixedDelay = 10000)
     fun checkSubscription() {
-        val subscription = subscriptionRepository.findAll().random()
+        val subscription = subscriptionRepository.findAll().randomOrNull() ?: return
+
         var trains = ticketsService.findTickets(subscription.placeFrom.id, subscription.placeTo.id, subscription.date)
 
         if (subscription.priceLimit != null) {
