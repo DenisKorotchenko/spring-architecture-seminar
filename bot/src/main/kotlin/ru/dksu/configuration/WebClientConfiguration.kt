@@ -7,6 +7,7 @@ import io.netty.handler.codec.http.cookie.Cookie
 import org.apache.http.impl.client.HttpClientBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
 import org.springframework.http.MediaType
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.http.codec.json.Jackson2JsonDecoder
@@ -22,6 +23,7 @@ class WebClientConfiguration {
     }
 
     @Bean
+    @Primary
     fun webClient(
         objectMapper: ObjectMapper,
     ): WebClient {
@@ -33,6 +35,12 @@ class WebClientConfiguration {
                 )
             }
             .filter(CookieManager())
+            .build()
+    }
+
+    @Bean("internal")
+    fun webClientInternal(): WebClient {
+        return WebClient.builder()
             .build()
     }
 }

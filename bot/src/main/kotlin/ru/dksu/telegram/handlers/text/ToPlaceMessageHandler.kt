@@ -1,7 +1,9 @@
 package ru.dksu.telegram.handlers.text
 
 import jakarta.transaction.Transactional
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.client.WebClient
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
@@ -14,9 +16,10 @@ import ru.dksu.telegram.state.State
 @Component
 class ToPlaceMessageHandler(
     override val nearestPlaceService: NearestPlaceService,
+    @Qualifier("internal") override val webClientInternal: WebClient,
     val stateRepository: StateRepository,
     val placeRepository: PlaceRepository,
-) : PlaceMessageHandler(nearestPlaceService) {
+) : PlaceMessageHandler(nearestPlaceService, webClientInternal) {
     override val state = State.TO_PLACE
 
     @Transactional
