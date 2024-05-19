@@ -29,7 +29,7 @@ class WebClientConfiguration {
             .baseUrl("https://pass.rzd.ru")
             .codecs {
                 it.customCodecs().registerWithDefaultConfig(
-                    Jackson2JsonDecoder(objectMapper, MediaType("text", "javascript"))
+                    Jackson2JsonDecoder(objectMapper, MediaType("text", "javascript", Charsets.UTF_8))
                 )
             }
             .filter(CookieManager())
