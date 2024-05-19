@@ -1,0 +1,29 @@
+server:
+  servlet:
+    context-path: /example
+  port: 8084
+
+telegram:
+  botName: "EasyTickets"
+  token: ${TELEGRAM_TOKEN}
+
+
+spring:
+  datasource:
+    #driver-class-name: tech.ydb.jdbc.YdbDriver
+    #driver-class-name: org.h2.Driver
+    driver-class-name: org.postgresql.Driver
+    #url: jdbc:ydb:grpcs://ydb.serverless.yandexcloud.net:2135/?database=/ru-central1/b1giu1cmr19b28ml1f58/etnt5gaeuubi9uf5qifb?saFile=file:~/sa_key.json
+    url: jdbc:postgresql://rc1b-2chvmuve31k65h4j.mdb.yandexcloud.net:6432/easy-tickets-main?targetServerType=master #&ssl=true&sslmode=verify-full
+    #url: jdbc:h2:file:./build/db
+    username: dksu
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+#    properties:
+#      hibernate:
+#        dialect: tech.ydb.hibernate.dialect.YdbDialect
