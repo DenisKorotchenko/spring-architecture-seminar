@@ -23,24 +23,15 @@ class WebClientConfiguration {
     }
 
     @Bean
-    @Primary
     fun webClient(
         objectMapper: ObjectMapper,
     ): WebClient {
         return WebClient.builder()
-            .baseUrl("https://pass.rzd.ru")
             .codecs {
                 it.customCodecs().registerWithDefaultConfig(
                     Jackson2JsonDecoder(objectMapper, MediaType("text", "javascript", Charsets.UTF_8))
                 )
             }
-            .filter(CookieManager())
-            .build()
-    }
-
-    @Bean("internal")
-    fun webClientInternal(): WebClient {
-        return WebClient.builder()
             .build()
     }
 }

@@ -20,7 +20,7 @@ class BuyHandler: CallbackHandler {
                         "https://www.rzd.ru/")
                 .replyMarkup(
                     getInlineKeyboard(listOf(
-                        listOf("main" to "На главную"),
+                        listOf("main" to "Главное меню"),
                     ))
                 )
                 .build())

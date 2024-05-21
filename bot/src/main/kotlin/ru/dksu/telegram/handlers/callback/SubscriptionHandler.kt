@@ -1,14 +1,11 @@
 package ru.dksu.telegram.handlers.callback
 
 import org.springframework.stereotype.Component
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.bots.AbsSender
 import ru.dksu.db.repository.SubscriptionRepository
-import ru.dksu.db.repository.UserRepository
 import ru.dksu.telegram.getInlineKeyboard
-import kotlin.jvm.optionals.getOrNull
 
 @Component
 class SubscriptionHandler(
@@ -27,10 +24,13 @@ class SubscriptionHandler(
                 .text("""Подписка:
                     |от ${subscription.placeFrom.name}
                     |до ${subscription.placeTo.name}
+                    |на ${subscription.date}
+                    |${subscription.priceLimit?.let { "билеты дешевле $it" } ?: "любые билеты"}
                 """.trimMargin())
                 .replyMarkup(getInlineKeyboard(listOf(
                     listOf("remove_subscription|${subscription.id}" to "Удалить подписку"),
                     listOf("subscriptions" to "Назад"),
+                    listOf("main" to "Главное меню"),
                 )))
                 .build()
             )

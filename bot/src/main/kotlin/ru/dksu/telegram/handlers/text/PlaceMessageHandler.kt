@@ -1,6 +1,5 @@
 package ru.dksu.telegram.handlers.text
 
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntity
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -10,7 +9,7 @@ import ru.dksu.telegram.getInlineKeyboard
 import java.util.*
 
 abstract class PlaceMessageHandler(
-    @Qualifier("internal") open val webClientInternal: WebClient,
+    open val webClientInternal: WebClient,
 ): TextMessageHandler {
     fun notFound(absSender: AbsSender, message: Message) {
         val tips =

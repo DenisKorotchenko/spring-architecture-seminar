@@ -2,7 +2,6 @@ package ru.dksu.controller
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import jakarta.ws.rs.QueryParam
-import org.springframework.beans.factory.getBean
 import org.springframework.core.io.ClassPathResource
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

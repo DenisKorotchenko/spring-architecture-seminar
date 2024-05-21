@@ -1,50 +1,29 @@
 package ru.dksu.telegram.handlers.text
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.transaction.Transactional
-import org.springframework.beans.factory.annotation.Qualifier
-import org.springframework.context.annotation.Bean
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyInserter
-import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntity
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
-import reactor.core.publisher.Mono
 import ru.dksu.db.entity.StateEntity
-import ru.dksu.db.entity.SubscriptionEntity
 import ru.dksu.db.repository.PlaceRepository
 import ru.dksu.db.repository.StateRepository
-import ru.dksu.db.repository.SubscriptionRepository
-import ru.dksu.db.repository.UserRepository
 import ru.dksu.dto.ResponseTrain
 import ru.dksu.telegram.getInlineKeyboard
 import ru.dksu.telegram.state.State
-import java.lang.Thread.sleep
-import java.text.DateFormat
-import java.time.Duration
 import java.time.LocalDate
-import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.Date
-import kotlin.jvm.optionals.getOrNull
 
 @Component
 class DateMessageHandler(
     val stateRepository: StateRepository,
     val placeRepository: PlaceRepository,
     val webClient: WebClient,
-    val objectMapper: ObjectMapper,
-    @Qualifier("internal") val internalWebClient: WebClient
 ) : TextMessageHandler {
-
     override val state = State.DATE
 
     private fun findTickets(fromId: String, toId: String, date: String): List<ResponseTrain> {
@@ -55,8 +34,7 @@ class DateMessageHandler(
             .block()?.body ?: emptyList()
     }
 
-    @Transactional
-    override fun process(absSender: AbsSender, message: Message, state: StateEntity) {
+    private fun checkDate(absSender: AbsSender, message: Message): Boolean {
         try {
             val date = LocalDate.parse(message.text, DateTimeFormatter.ofPattern("dd.MM.uuuu"))
             if (ChronoUnit.DAYS.between(LocalDate.now(), date) < 0) {
@@ -66,7 +44,7 @@ class DateMessageHandler(
                         .text("Невозможно найти билеты на уже прошедшую дату. Попробуйте ещё раз")
                         .build()
                 )
-                return
+                return false
             }
             if (ChronoUnit.DAYS.between(LocalDate.now(), date) > 365) {
                 absSender.execute(
@@ -75,8 +53,9 @@ class DateMessageHandler(
                         .text("Невозможно найти билеты на более чем 365 дней вперёд. Попробуйте ещё раз")
                         .build()
                 )
-                return
+                return false
             }
+            return true
         } catch (e: RuntimeException) {
             absSender.execute(
                 SendMessage.builder()
@@ -84,8 +63,14 @@ class DateMessageHandler(
                     .text("Неверный формат. Используйте формат 31.12.2024:")
                     .build()
             )
-            return
+            return false
         }
+    }
+
+    @Transactional
+    override fun process(absSender: AbsSender, message: Message, state: StateEntity) {
+        if (!checkDate(absSender, message))
+            return
 
         val splitCache = state.cache.split('|')
         val fromPlaceId = splitCache[0]
@@ -129,7 +114,7 @@ class DateMessageHandler(
                     )
                 })
         } catch (e: RuntimeException) {
-            println("Error: ${e.message}")
+            logger.error(e.message, e)
 
             val placeFromEntity = placeRepository.findById(fromPlaceId).get()
             val placeToEntity = placeRepository.findById(toPlaceId).get()
@@ -137,7 +122,7 @@ class DateMessageHandler(
             absSender.execute(
                 SendMessage.builder()
                     .chatId(message.chatId)
-                    .text("Билеты по направление ${placeFromEntity.name} - ${placeToEntity.name} не найдены")
+                .text("Билеты по направление ${placeFromEntity.name} - ${placeToEntity.name} не найдены. Возможно, произошла внутренняя ошибка: попробуйте ещё раз!")
                     .replyMarkup(
                         getInlineKeyboard(
                             listOf(
@@ -153,5 +138,9 @@ class DateMessageHandler(
             state.cache = ""
             stateRepository.save(state)
         }
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(DateMessageHandler::class.java)
     }
 }

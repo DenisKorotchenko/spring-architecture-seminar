@@ -1,6 +1,5 @@
 package ru.dksu.telegram.handlers.text
 
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -13,7 +12,7 @@ import ru.dksu.telegram.state.State
 
 @Component
 class FromPlaceMessageHandler(
-    @Qualifier("internal") override val webClientInternal: WebClient,
+    override val webClientInternal: WebClient,
     val stateRepository: StateRepository,
     val placeRepository: PlaceRepository,
 ): PlaceMessageHandler(webClientInternal) {

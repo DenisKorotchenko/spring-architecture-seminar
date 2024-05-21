@@ -29,10 +29,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
-    //implementation("org.postgresql:postgresql:42.6.0")
-    implementation("com.h2database:h2:2.2.222")
 
-    //implementation("org.springdoc:springdoc-openapi-ui:1.6.3")
     implementation("javax.validation:validation-api:1.1.0.Final")
     implementation("org.springdoc","springdoc-openapi-starter-webmvc-ui", "2.0.2")
 
@@ -42,8 +39,6 @@ dependencies {
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.3") // for JVM platform
 
     implementation("org.postgresql:postgresql")
-//    implementation("tech.ydb.dialects:hibernate-ydb-dialect:0.9.0")
-//    implementation("tech.ydb.jdbc:ydb-jdbc-driver:2.1.2")
 }
 
 tasks {

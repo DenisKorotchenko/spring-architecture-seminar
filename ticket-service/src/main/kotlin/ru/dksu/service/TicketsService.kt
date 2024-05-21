@@ -2,6 +2,7 @@ package ru.dksu.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
@@ -22,6 +23,7 @@ class TicketsService(
     )
 
     fun findTickets(fromPlaceId: String, toPlaceId: String, dateString: String): List<ResponseTrain> {
+        logger.info("Try to find tickets from $fromPlaceId to $toPlaceId on date $dateString")
         val response1 = webClient.get().uri { uriBuilder ->
             uriBuilder
                 .path("/timetable/public/ru")
@@ -49,7 +51,7 @@ class TicketsService(
         val rid = response1?.body?.RID
 
         if (rid == null) {
-            println("NO RID in response")
+            logger.error("NO RID in response")
             throw RuntimeException("No RID in response")
         }
 
@@ -81,5 +83,9 @@ class TicketsService(
             objectMapper.readValue<ResponseTrain>(objectMapper.writeValueAsString(it))
         }
         return trains
+    }
+
+    companion object {
+        private val logger = LoggerFactory.getLogger(TicketsService::class.java)
     }
 }
