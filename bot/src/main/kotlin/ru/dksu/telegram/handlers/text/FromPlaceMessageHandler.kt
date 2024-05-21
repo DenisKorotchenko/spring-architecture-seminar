@@ -9,16 +9,14 @@ import org.telegram.telegrambots.meta.bots.AbsSender
 import ru.dksu.db.entity.StateEntity
 import ru.dksu.db.repository.PlaceRepository
 import ru.dksu.db.repository.StateRepository
-import ru.dksu.service.NearestPlaceService
 import ru.dksu.telegram.state.State
 
 @Component
 class FromPlaceMessageHandler(
-    override val nearestPlaceService: NearestPlaceService,
     @Qualifier("internal") override val webClientInternal: WebClient,
     val stateRepository: StateRepository,
     val placeRepository: PlaceRepository,
-): PlaceMessageHandler(nearestPlaceService, webClientInternal) {
+): PlaceMessageHandler(webClientInternal) {
     override val state = State.FROM_PLACE
     override fun process(absSender: AbsSender, message: Message, state: StateEntity) {
         val placeEntity = placeRepository.findByName(message.text.uppercase())

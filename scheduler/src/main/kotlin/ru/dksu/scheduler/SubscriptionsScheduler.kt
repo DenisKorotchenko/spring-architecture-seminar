@@ -1,27 +1,35 @@
 package ru.dksu.scheduler
 
-import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.ResponseEntity
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.toEntity
 import ru.dksu.db.repository.SubscriptionRepository
 import ru.dksu.dto.NewTicketsDto
+import ru.dksu.dto.ResponseTrain
 import ru.dksu.dto.TrainDto
-import ru.dksu.service.TicketsService
 
 @Component
 @EnableScheduling
 class SubscriptionsScheduler(
     private val subscriptionRepository: SubscriptionRepository,
-    private val ticketsService: TicketsService,
-    @Qualifier("internal") private val internalWebClient: WebClient
+    private val webClient: WebClient,
 ) {
+    private fun callTicketsService(fromId: String, toId: String, date: String): List<ResponseTrain> {
+        return webClient.get()
+            .uri("http://localhost:8085/example/tickets/?fromPlaceId=$fromId&toPlaceId=$toId&date=$date")
+            .retrieve()
+            .toEntity<List<ResponseTrain>>()
+            .block()?.body ?: emptyList()
+    }
+
     @Scheduled(fixedDelay = 10000)
     fun checkSubscription() {
         val subscription = subscriptionRepository.findAll().randomOrNull() ?: return
 
-        var trains = ticketsService.findTickets(subscription.placeFrom.id, subscription.placeTo.id, subscription.date)
+        var trains = callTicketsService(subscription.placeFrom.id, subscription.placeTo.id, subscription.date)
 
         if (subscription.priceLimit != null) {
             trains = trains.filter {
@@ -33,7 +41,7 @@ class SubscriptionsScheduler(
             return
         }
 
-        internalWebClient.post()
+        webClient.post()
             .uri("http://localhost:8083/example/${subscription.id}/tickets")
             .bodyValue(NewTicketsDto(trains.map {
                 TrainDto(

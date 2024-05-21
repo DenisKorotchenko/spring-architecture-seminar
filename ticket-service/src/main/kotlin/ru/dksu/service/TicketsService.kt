@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.toEntity
+import ru.dksu.dto.ResponseTrain
 import java.lang.Thread.sleep
 
 @Component
@@ -18,21 +19,6 @@ class TicketsService(
     data class Response1(
         val result: String,
         val RID: String?,
-    )
-
-    data class ResponseCar(
-        val type: String,
-        val freeSeats: Int,
-        val tariff: Int,
-    )
-
-    data class ResponseTrain(
-        val number: String,
-        val date0: String,
-        val time0: String,
-        val date1: String,
-        val time1: String,
-        val cars: List<ResponseCar>
     )
 
     fun findTickets(fromPlaceId: String, toPlaceId: String, dateString: String): List<ResponseTrain> {

@@ -8,7 +8,7 @@ import ru.dksu.telegram.getInlineKeyboard
 
 @Component
 class BuyHandler: CallbackHandler {
-    override val name = HandlerName.MAIN
+    override val name = HandlerName.BUY
 
     override fun processCallbackData(absSender: AbsSender, callbackQuery: CallbackQuery, arguments: List<String>) {
         absSender.execute(

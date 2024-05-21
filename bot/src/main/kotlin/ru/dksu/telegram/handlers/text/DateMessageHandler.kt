@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.transaction.Transactional
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.Bean
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
@@ -21,7 +23,7 @@ import ru.dksu.db.repository.PlaceRepository
 import ru.dksu.db.repository.StateRepository
 import ru.dksu.db.repository.SubscriptionRepository
 import ru.dksu.db.repository.UserRepository
-import ru.dksu.service.TicketsService
+import ru.dksu.dto.ResponseTrain
 import ru.dksu.telegram.getInlineKeyboard
 import ru.dksu.telegram.state.State
 import java.lang.Thread.sleep
@@ -40,10 +42,18 @@ class DateMessageHandler(
     val placeRepository: PlaceRepository,
     val webClient: WebClient,
     val objectMapper: ObjectMapper,
-    val ticketsService: TicketsService,
+    @Qualifier("internal") val internalWebClient: WebClient
 ) : TextMessageHandler {
 
     override val state = State.DATE
+
+    private fun findTickets(fromId: String, toId: String, date: String): List<ResponseTrain> {
+        return webClient.get()
+            .uri("http://localhost:8085/example/tickets/?fromPlaceId=$fromId&toPlaceId=$toId&date=$date")
+            .retrieve()
+            .toEntity<List<ResponseTrain>>()
+            .block()?.body ?: emptyList()
+    }
 
     @Transactional
     override fun process(absSender: AbsSender, message: Message, state: StateEntity) {
@@ -82,7 +92,7 @@ class DateMessageHandler(
         val toPlaceId = splitCache[1]
 
         try {
-            val trains = ticketsService.findTickets(fromPlaceId, toPlaceId, message.text)
+            val trains = findTickets(fromPlaceId, toPlaceId, message.text)
             val tickets = trains.filter {
                 it.cars.fold(0) { r, t ->
                     r + t.freeSeats

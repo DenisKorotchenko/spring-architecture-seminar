@@ -6,16 +6,13 @@ import org.springframework.web.reactive.function.client.toEntity
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.bots.AbsSender
-import ru.dksu.service.NearestPlaceService
 import ru.dksu.telegram.getInlineKeyboard
 import java.util.*
 
 abstract class PlaceMessageHandler(
-    open val nearestPlaceService: NearestPlaceService,
     @Qualifier("internal") open val webClientInternal: WebClient,
 ): TextMessageHandler {
     fun notFound(absSender: AbsSender, message: Message) {
-        //val tips = nearestPlaceService.findNearest(message.text.uppercase(Locale.getDefault()))
         val tips =
             webClientInternal.get()
                 .uri("http://localhost:8082/example/nearestPlace/?str=${message.text.uppercase(Locale.getDefault())}")
