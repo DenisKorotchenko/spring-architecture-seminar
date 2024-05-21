@@ -122,7 +122,7 @@ class DateMessageHandler(
             absSender.execute(
                 SendMessage.builder()
                     .chatId(message.chatId)
-                .text("Билеты по направление ${placeFromEntity.name} - ${placeToEntity.name} не найдены. Возможно, произошла внутренняя ошибка: попробуйте ещё раз!")
+                .text("Билеты по направление ${placeFromEntity.name} - ${placeToEntity.name} не найдены")
                     .replyMarkup(
                         getInlineKeyboard(
                             listOf(
