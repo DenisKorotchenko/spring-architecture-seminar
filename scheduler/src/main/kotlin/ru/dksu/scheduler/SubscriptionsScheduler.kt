@@ -24,7 +24,7 @@ class SubscriptionsScheduler(
             .block()?.body ?: emptyList()
     }
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 2000)
     fun checkSubscription() {
         val subscription = subscriptionRepository.findAll().randomOrNull() ?: return
 
